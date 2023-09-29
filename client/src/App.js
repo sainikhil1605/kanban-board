@@ -1,11 +1,12 @@
 import "./App.css";
+import KanbanBoard from "./Components/KanbanBoard";
 
-import Kanban from "./Components/KanbanBoard";
+import Register from "./Components/Register";
 
 function App() {
   return (
     <div className="App">
-      <Kanban />
+      <KanbanBoard />
     </div>
   );
 }

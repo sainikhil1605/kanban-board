@@ -75,6 +75,9 @@ const itemStyles = {
   },
   doneStyles: {
     textDecoration: "line-through",
+    alignItems: "flex-start",
+    display: "flex",
+    margin: "10px",
   },
   dialogField: {
     margin: "15px",
