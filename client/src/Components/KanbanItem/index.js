@@ -14,109 +14,11 @@ import {
   Input,
   TextField,
 } from "@mui/material";
-import { dropdownOptions, users } from "../../utils/channels";
-const CardDialog = ({
-  itemId,
-  open,
-  item,
-  currItem,
-  setItem,
-  setTaskStatus,
-  tasks,
-  setOpen,
-}) => {
-  const value = dropdownOptions.find((it) => it.value === currItem.status);
-  const handleSubmit = useCallback(() => {
-    let task = tasks.find((task) => task._id === item._id);
-    const taskIndex = tasks.indexOf(item);
-    task = { ...task, ...currItem };
-    const newTasks = [...tasks];
-    newTasks[taskIndex] = task;
-    console.log(newTasks);
-    setTaskStatus(newTasks);
-    setOpen(false);
-  }, [tasks, item, currItem, setTaskStatus, value]);
-  const handleDelete = () => {
-    const taskIndex = tasks.indexOf(item);
-    const newTasks = [...tasks];
-    newTasks.splice(taskIndex, 1);
-    setTaskStatus(newTasks);
-    setOpen(false);
-  };
+import { dropdownOptions } from "../../utils/channels";
+import CardModal from "../CardModal";
+import { deepOrange } from "@mui/material/colors";
 
-  return (
-    <Dialog open={open} fullWidth maxWidth="xs">
-      <DialogTitle>
-        <div>{item.taskId}</div>
-      </DialogTitle>
-      <DialogContent dividers>
-        <div style={itemStyles.dialogField}>
-          <TextField
-            fullWidth
-            label="Task Title"
-            value={currItem.title}
-            onChange={(e) => setItem({ ...currItem, title: e.target.value })}
-            variant="outlined"
-          />
-        </div>
-        <div style={itemStyles.dialogField}>
-          <TextField
-            fullWidth
-            label="Description"
-            value={currItem.description}
-            onChange={(e) =>
-              setItem({ ...currItem, description: e.target.value })
-            }
-            variant="outlined"
-          />
-        </div>
-        <div style={itemStyles.dialogField}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={dropdownOptions}
-            sx={{ width: 300 }}
-            getOptionLabel={(option) => option.label}
-            value={value}
-            onChange={(e, newValue) =>
-              setItem({ ...currItem, status: newValue.value })
-            }
-            renderInput={(params) => <TextField {...params} label="Status" />}
-          />
-        </div>
-        <div style={itemStyles.dialogField}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={users}
-            sx={{ width: 300 }}
-            getOptionLabel={(option) => option.name}
-            value={currItem.assignedTo}
-            onChange={(e, newValue) => {
-              setItem({ ...currItem, assignedTo: newValue });
-              console.log(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} label="Assigned" />}
-          />
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <div>
-          <Button
-            color="error"
-            variant="outlined"
-            style={itemStyles.dialogueDeleteBtn}
-            onClick={() => handleDelete()}
-          >
-            Delete Task
-          </Button>
-          <Button onClick={() => handleSubmit()}>Save Changes</Button>
-        </div>
-      </DialogActions>
-    </Dialog>
-  );
-};
-const KanbanItem = ({ id, item, setTaskStatus, tasks }) => {
+const KanbanItem = ({ id, item, setTaskStatus, tasks, users }) => {
   const [open, setOpen] = useState(false);
   const [currItem, setItem] = useState(item);
   const ref = useRef(null);
@@ -131,6 +33,23 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks }) => {
   drag(ref);
   const handleOpen = () => {
     setOpen(true);
+  };
+  const handleSubmit = useCallback(() => {
+    let task = tasks?.find((task) => task._id === item._id);
+    const taskIndex = tasks.indexOf(item);
+    task = { ...task, ...currItem };
+    const newTasks = [...tasks];
+    newTasks[taskIndex] = task;
+    console.log(newTasks);
+    setTaskStatus(newTasks);
+    setOpen(false);
+  }, [tasks, item, currItem, setTaskStatus]);
+  const handleDelete = () => {
+    const taskIndex = tasks.indexOf(item);
+    const newTasks = [...tasks];
+    newTasks.splice(taskIndex, 1);
+    setTaskStatus(newTasks);
+    setOpen(false);
   };
   return (
     <>
@@ -154,8 +73,9 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks }) => {
             <div style={itemStyles.itemId}>{item?.taskId}</div>
             <div>
               <Avatar
-                src={item?.assignedTo?.avatarSrc}
-                alt="kanban avatar"
+                src={item?.assignedTo?.avatarSrc || "https://"}
+                alt={item?.assignedTo?.name}
+                sx={{ bgcolor: deepOrange[400] }}
                 title={item?.assignedTo?.name}
               />
             </div>
@@ -163,7 +83,7 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks }) => {
           </div>
         </div>
       </Card>
-      <CardDialog
+      <CardModal
         itemId={id}
         open={open}
         item={item}
@@ -172,6 +92,9 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks }) => {
         setTaskStatus={setTaskStatus}
         tasks={tasks}
         setOpen={setOpen}
+        handleDelete={handleDelete}
+        handleSubmit={handleSubmit}
+        users={users}
       />
     </>
   );

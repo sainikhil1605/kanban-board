@@ -1,5 +1,6 @@
 package com.kanban.server.config;
 
+import com.kanban.server.models.user.UserDAO;
 import com.kanban.server.models.user.UserDTO;
 import com.kanban.server.services.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -60,10 +61,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Validating Token
         if(jwtTokenUtil.validateToken(jwt,username)){
-            UserDTO userDTO= jwtUserDetailsService.loadUserByUsername(username);
-            System.out.print(userDTO);
+            UserDAO userDAO= jwtUserDetailsService.loadUserByUsername(username);
+            System.out.print(userDAO);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDTO, null, userDTO.getAuthorities());
+                    userDAO, null, userDAO.getAuthorities());
             usernamePasswordAuthenticationToken
                     .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             // After setting the Authentication in the context, we specify

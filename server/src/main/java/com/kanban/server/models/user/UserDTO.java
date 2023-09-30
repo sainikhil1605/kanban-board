@@ -1,5 +1,7 @@
 package com.kanban.server.models.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,43 +17,12 @@ import java.util.Collection;
 @Setter
 @Builder
 
-public class UserDTO implements UserDetails {
+public class UserDTO  {
     private long id;
-
     private String email;
+    @JsonIgnore
     private String password;
-    private String firstName;
-    private String lastName;
+
+    private String name;
     private String avatarSrc;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

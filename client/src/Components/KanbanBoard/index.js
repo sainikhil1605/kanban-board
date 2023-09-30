@@ -23,100 +23,95 @@ import {
   channels,
   dropdownOptions,
   labelsMap,
-  users,
   tasksList,
 } from "../../utils/channels";
 import itemStyles from "../KanbanItem/KanbanItem.styles";
 import axiosInstance from "../../utils/axiosInstance";
+import CardModal from "../CardModal";
+import { deepOrange } from "@mui/material/colors";
 
-const AddTaskDialog = ({ open, setTaskStatus, setOpen }) => {
-  const [currItem, setItem] = useState({
-    title: "",
-    description: "",
-    status: "",
-  });
-  const handleSubmit = () => {
-    setTaskStatus((prev) => [...prev, currItem]);
-    setOpen(false);
-  };
-
-  return (
-    <Dialog open={open} fullWidth maxWidth="xs">
-      <DialogTitle>
-        <div>Add New Task</div>
-      </DialogTitle>
-      <DialogContent dividers>
-        <div style={itemStyles.dialogField}>
-          <TextField
-            fullWidth
-            label="Task Title"
-            value={currItem.title}
-            onChange={(e) => setItem({ ...currItem, title: e.target.value })}
-            variant="outlined"
-          />
-        </div>
-        <div style={itemStyles.dialogField}>
-          <TextField
-            fullWidth
-            label="Description"
-            value={currItem.description}
-            onChange={(e) =>
-              setItem({ ...currItem, description: e.target.value })
-            }
-            variant="outlined"
-          />
-        </div>
-        <div style={itemStyles.dialogField}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={dropdownOptions}
-            sx={{ width: 300 }}
-            value={currItem.status}
-            // getOptionLabel={(option) => option.label}
-            onChange={(e, newValue) =>
-              setItem({ ...currItem, status: newValue.value })
-            }
-            renderInput={(params) => <TextField {...params} label="Status" />}
-          />
-        </div>
-        <div style={itemStyles.dialogField}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={users}
-            sx={{ width: 300 }}
-            getOptionLabel={(option) => option.name}
-            value={currItem.assignedTo}
-            onChange={(e, newValue) => {
-              setItem({ ...currItem, assignedTo: newValue });
-              console.log(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} label="Assigned" />}
-          />
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <div>
-          <Button onClick={() => handleSubmit()}>Save Changes</Button>
-        </div>
-      </DialogActions>
-    </Dialog>
-  );
-};
+// const AddTaskDialog = ({ open, setTaskStatus, setOpen, users }) => {
+//   return (
+//     <Dialog open={open} fullWidth maxWidth="xs">
+//       <DialogTitle>
+//         <div>Add New Task</div>
+//       </DialogTitle>
+//       <DialogContent dividers>
+//         <div style={itemStyles.dialogField}>
+//           <TextField
+//             fullWidth
+//             label="Task Title"
+//             value={currItem.title}
+//             onChange={(e) => setItem({ ...currItem, title: e.target.value })}
+//             variant="outlined"
+//           />
+//         </div>
+//         <div style={itemStyles.dialogField}>
+//           <TextField
+//             fullWidth
+//             label="Description"
+//             value={currItem.description}
+//             onChange={(e) =>
+//               setItem({ ...currItem, description: e.target.value })
+//             }
+//             variant="outlined"
+//           />
+//         </div>
+//         <div style={itemStyles.dialogField}>
+//           <Autocomplete
+//             disablePortal
+//             id="combo-box-demo"
+//             options={dropdownOptions}
+//             sx={{ width: 300 }}
+//             value={currItem.status}
+//             // getOptionLabel={(option) => option.label}
+//             onChange={(e, newValue) =>
+//               setItem({ ...currItem, status: newValue.value })
+//             }
+//             renderInput={(params) => <TextField {...params} label="Status" />}
+//           />
+//         </div>
+//         <div style={itemStyles.dialogField}>
+//           <Autocomplete
+//             disablePortal
+//             id="combo-box-demo"
+//             options={users}
+//             sx={{ width: 300 }}
+//             getOptionLabel={(option) => option.name}
+//             value={currItem.assignedTo}
+//             onChange={(e, newValue) => {
+//               setItem({ ...currItem, assignedTo: newValue });
+//               console.log(newValue);
+//             }}
+//             renderInput={(params) => <TextField {...params} label="Assigned" />}
+//           />
+//         </div>
+//       </DialogContent>
+//       <DialogActions>
+//         <div>
+//           <Button onClick={() => handleSubmit()}>Save Changes</Button>
+//         </div>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
 const KanbanBoard = () => {
   const [tasks, setTaskStatus] = useState(tasksList);
   const [open, setOpen] = useState(false);
   const [isUserFilter, setUserFilter] = useState(false);
   const [currUser, setCurrUser] = useState(null);
+  const [users, setUsers] = useState([]);
+
   const changeTaskStatus = useCallback(
-    (id, status) => {
-      let task = tasks.find((task) => task._id === id);
+    async (id, status) => {
+      let task = tasks?.find((task) => task.id === id);
       const taskIndex = tasks.indexOf(task);
+      const data = await axiosInstance.patch(`/task/${id}`, { status });
       task = { ...task, status };
       const newTasks = [...tasks];
       newTasks[taskIndex] = task;
       setTaskStatus(newTasks);
+
       //   let newTasks = update(tasks, {
       //     [taskIndex]: { $set: task },
       //   });
@@ -124,6 +119,17 @@ const KanbanBoard = () => {
     },
     [tasks]
   );
+  const [currItem, setItem] = useState({
+    title: "",
+    description: "",
+    status: "",
+  });
+  const handleSubmit = async () => {
+    const data = await axiosInstance.post("/task", currItem);
+    setTaskStatus((prev) => [...prev, data.data]);
+    setOpen(false);
+  };
+
   const filterUser = (id) => {
     if (isUserFilter && currUser === Number(id)) {
       setUserFilter(false);
@@ -131,7 +137,7 @@ const KanbanBoard = () => {
       setTaskStatus(tasksList);
       return;
     }
-    const filteredTasks = tasksList.filter((item) => {
+    const filteredTasks = tasksList?.filter((item) => {
       return item.assignedTo.id === Number(id);
     });
     setCurrUser(Number(id));
@@ -142,8 +148,14 @@ const KanbanBoard = () => {
     const tasks = await axiosInstance.get("/task");
     setTaskStatus(tasks.data);
   };
+  const getUsers = async () => {
+    const userData = await axiosInstance.get("/getUsers");
+
+    setUsers(userData.data);
+  };
   useEffect(() => {
     getTasks();
+    getUsers();
   }, []);
 
   return (
@@ -189,7 +201,8 @@ const KanbanBoard = () => {
                     id: user.id,
                     style: { cursor: "pointer" },
                   }}
-                  src={user.avatarSrc}
+                  src={user.avatarSrc || "https://"}
+                  sx={{ bgcolor: deepOrange[500] }}
                   onClick={(e) => filterUser(e.target.id)}
                 />
               ))}
@@ -197,10 +210,14 @@ const KanbanBoard = () => {
           </div>
         </div>
         <div>
-          <AddTaskDialog
+          <CardModal
             open={open}
             setTaskStatus={setTaskStatus}
-            setOpen={setOpen}
+            users={users}
+            handleSubmit={handleSubmit}
+            setItem={setItem}
+            currItem={currItem}
+            isNewTask={true}
           />
           <Button
             onClick={() => setOpen(true)}
@@ -237,14 +254,15 @@ const KanbanBoard = () => {
 
                 <div style={{ margin: "5px" }}>
                   {tasks
-                    .filter((item) => item.status === channel)
+                    ?.filter((item) => item.status === channel)
                     .map((item) => (
                       <KanbanItem
-                        key={item._id}
-                        id={item._id}
+                        key={item.id}
+                        id={item.id}
                         item={item}
                         setTaskStatus={setTaskStatus}
                         tasks={tasks}
+                        users={users}
                       />
                     ))}
                 </div>

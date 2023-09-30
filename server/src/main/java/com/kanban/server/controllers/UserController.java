@@ -25,10 +25,10 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
-        System.out.println(userDTO);
+    public ResponseEntity<?> register(@RequestBody UserDAO userDAO){
+//        System.out.println(userDTO);
         try {
-            UserDTO user = jwtUserDetailsService.save(userDTO);
+            UserDTO user = jwtUserDetailsService.save(userDAO);
 
             return ResponseEntity.ok(jwtTokenUtil.getToken(user));
         }catch (Exception e){
@@ -50,10 +50,10 @@ public class UserController {
         }
 
     }
-//    @PostMapping("/adduser")
-//    public UserDAO addUser(@RequestBody UserDAO user) {
-//
-//        return userService.addUser(user);
-//
-//    }
+    @GetMapping("/getUsers")
+    public ResponseEntity<?> addUser() {
+
+        return ResponseEntity.ok(jwtUserDetailsService.getUsers());
+
+    }
 }

@@ -44,7 +44,7 @@ public class WebSecurityConfig {
         http.cors().and().csrf().disable().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST,"/register","/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/task/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/task/**").permitAll();
+                .requestMatchers(HttpMethod.GET,"/task/**","/getUsers").permitAll().requestMatchers(HttpMethod.PATCH,"/task/**").permitAll();
         // Adding our jwt filter before the username password filter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

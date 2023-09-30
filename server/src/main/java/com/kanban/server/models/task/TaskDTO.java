@@ -1,5 +1,8 @@
 package com.kanban.server.models.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.kanban.server.models.user.UserDAO;
+import com.kanban.server.models.user.UserDTO;
 import lombok.*;
 
 @Builder
@@ -20,5 +23,6 @@ public class TaskDTO {
     private String title;
     private String description;
     private String status;
-    private long assignedTo;
+    @JsonIgnoreProperties({"password"})
+    private UserDAO assignedTo;
 }

@@ -2,6 +2,7 @@ package com.kanban.server.controllers;
 
 import com.kanban.server.models.task.TaskDAO;
 import com.kanban.server.models.task.TaskDTO;
+import com.kanban.server.models.user.UserDTO;
 import com.kanban.server.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 public class TaskController {
     @Autowired
     TaskService taskService;
-    @PostMapping("/addtask")
+    @PostMapping("")
     public TaskDTO addTask(@RequestBody TaskDTO task) {
         System.out.println(task);
         return taskService.addTask(task);
@@ -25,4 +26,12 @@ public class TaskController {
     public ResponseEntity<List<TaskDTO>> getAllTasks(){
         return new ResponseEntity<List<TaskDTO>>(taskService.getAllTasks(), HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}")
+    @CrossOrigin(origins="http://localhost:3000")
+    public ResponseEntity<TaskDTO> updateTaskStatus(@PathVariable Long id,@RequestBody TaskDTO status){
+
+        return new ResponseEntity<TaskDTO>(taskService.updateTaskStatus(id,status.getStatus()),HttpStatus.OK);
+    }
+
 }

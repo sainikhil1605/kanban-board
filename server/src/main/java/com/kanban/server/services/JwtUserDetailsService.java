@@ -4,37 +4,45 @@ import com.kanban.server.models.user.UserDAO;
 import com.kanban.server.models.user.UserDTO;
 import com.kanban.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 //    @Autowired
-//    private PasswordEncoder passwordEncoder;
+//    PasswordEncoder passwordEncoder;
 
-    public UserDTO loadUserByUsername(String username){
-        UserDAO user = userRepository.findByEmail(username);
-        return UserDTO.builder().email(user.getEmail()).build();
+    public UserDAO loadUserByUsername(String username){
+        return userRepository.findByEmail(username);
+
 
     }
-    public UserDTO save(UserDTO user){
-        UserDAO userDAO = UserDAO.builder()
-                .email(user.getEmail())
-                .password(new BCryptPasswordEncoder().encode(user.getPassword()))
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .avatarSrc(user.getAvatarSrc())
-                .build();
-        userDAO= userRepository.save(userDAO);
+    public UserDTO save(UserDAO user){
+        UserDAO userDAO=UserDAO.builder().email(user.getEmail()).name(user.getName()).avatarSrc(user.getAvatarSrc()).password(new BCryptPasswordEncoder().encode(user.getPassword())).build();
+//        UserDAO savedUser= userRepository.save(user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()))));
+        UserDAO savedUser= userRepository.save(userDAO);
         return UserDTO.builder()
-                .email(userDAO.getEmail())
-                .firstName(userDAO.getFirstName())
-                .lastName(userDAO.getLastName())
-                .avatarSrc(userDAO.getAvatarSrc())
+                .email(savedUser.getEmail())
+                .name(savedUser.getName())
+                .avatarSrc(savedUser.getAvatarSrc())
                 .build();
     }
+    public List<UserDTO> getUsers(){
+        List<UserDTO> userDTOS= new ArrayList<>();
+        userRepository.findAll().forEach(userDAO ->
+                userDTOS.add(UserDTO.builder().id(userDAO.getId()).email(userDAO.getEmail()).name(userDAO.getName()).avatarSrc(userDAO.getAvatarSrc()).build()
+                ));
+        return userDTOS;
+    }
+
+
 
 }
