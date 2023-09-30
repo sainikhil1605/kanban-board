@@ -30,75 +30,10 @@ import axiosInstance from "../../utils/axiosInstance";
 import CardModal from "../CardModal";
 import { deepOrange } from "@mui/material/colors";
 
-// const AddTaskDialog = ({ open, setTaskStatus, setOpen, users }) => {
-//   return (
-//     <Dialog open={open} fullWidth maxWidth="xs">
-//       <DialogTitle>
-//         <div>Add New Task</div>
-//       </DialogTitle>
-//       <DialogContent dividers>
-//         <div style={itemStyles.dialogField}>
-//           <TextField
-//             fullWidth
-//             label="Task Title"
-//             value={currItem.title}
-//             onChange={(e) => setItem({ ...currItem, title: e.target.value })}
-//             variant="outlined"
-//           />
-//         </div>
-//         <div style={itemStyles.dialogField}>
-//           <TextField
-//             fullWidth
-//             label="Description"
-//             value={currItem.description}
-//             onChange={(e) =>
-//               setItem({ ...currItem, description: e.target.value })
-//             }
-//             variant="outlined"
-//           />
-//         </div>
-//         <div style={itemStyles.dialogField}>
-//           <Autocomplete
-//             disablePortal
-//             id="combo-box-demo"
-//             options={dropdownOptions}
-//             sx={{ width: 300 }}
-//             value={currItem.status}
-//             // getOptionLabel={(option) => option.label}
-//             onChange={(e, newValue) =>
-//               setItem({ ...currItem, status: newValue.value })
-//             }
-//             renderInput={(params) => <TextField {...params} label="Status" />}
-//           />
-//         </div>
-//         <div style={itemStyles.dialogField}>
-//           <Autocomplete
-//             disablePortal
-//             id="combo-box-demo"
-//             options={users}
-//             sx={{ width: 300 }}
-//             getOptionLabel={(option) => option.name}
-//             value={currItem.assignedTo}
-//             onChange={(e, newValue) => {
-//               setItem({ ...currItem, assignedTo: newValue });
-//               console.log(newValue);
-//             }}
-//             renderInput={(params) => <TextField {...params} label="Assigned" />}
-//           />
-//         </div>
-//       </DialogContent>
-//       <DialogActions>
-//         <div>
-//           <Button onClick={() => handleSubmit()}>Save Changes</Button>
-//         </div>
-//       </DialogActions>
-//     </Dialog>
-//   );
-// };
 const KanbanBoard = () => {
-  const [tasks, setTaskStatus] = useState(tasksList);
+  const [tasks, setTaskStatus] = useState([]);
   const [open, setOpen] = useState(false);
-  const [isUserFilter, setUserFilter] = useState(false);
+
   const [currUser, setCurrUser] = useState(null);
   const [users, setUsers] = useState([]);
 
@@ -131,18 +66,11 @@ const KanbanBoard = () => {
   };
 
   const filterUser = (id) => {
-    if (isUserFilter && currUser === Number(id)) {
-      setUserFilter(false);
+    if (currUser === Number(id)) {
       setCurrUser(null);
-      setTaskStatus(tasksList);
       return;
     }
-    const filteredTasks = tasksList?.filter((item) => {
-      return item.assignedTo.id === Number(id);
-    });
     setCurrUser(Number(id));
-    setTaskStatus(filteredTasks);
-    setUserFilter(true);
   };
   const getTasks = async () => {
     const tasks = await axiosInstance.get("/task");
@@ -254,7 +182,12 @@ const KanbanBoard = () => {
 
                 <div style={{ margin: "5px" }}>
                   {tasks
-                    ?.filter((item) => item.status === channel)
+                    ?.filter(
+                      (item) =>
+                        item.status === channel &&
+                        (currUser === null ||
+                          currUser === Number(item.assignedTo.id))
+                    )
                     .map((item) => (
                       <KanbanItem
                         key={item.id}
