@@ -2,6 +2,7 @@ package com.kanban.server.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,9 +21,16 @@ import java.util.Collection;
 public class UserDTO  {
     private long id;
     private String email;
-    @JsonIgnore
     private String password;
-
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
     private String name;
     private String avatarSrc;
+
 }

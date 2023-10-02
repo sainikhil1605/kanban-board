@@ -6,36 +6,27 @@ import KanbanItem from "../KanbanItem";
 import KanbanColumn from "../KanbanColumn";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-  Autocomplete,
   Avatar,
   AvatarGroup,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  channels,
-  dropdownOptions,
-  labelsMap,
-  tasksList,
-} from "../../utils/channels";
 import itemStyles from "../KanbanItem/KanbanItem.styles";
 import axiosInstance from "../../utils/axiosInstance";
 import CardModal from "../CardModal";
 import { deepOrange } from "@mui/material/colors";
+import { channels } from "../../utils/channels";
 
 const KanbanBoard = () => {
   const [tasks, setTaskStatus] = useState([]);
   const [open, setOpen] = useState(false);
-
+  const [addLaneOpen, setAddLaneOpen] = useState(false);
   const [currUser, setCurrUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [lanes, setLanes] = useState([]);
 
   const changeTaskStatus = useCallback(
     async (id, status) => {
@@ -46,11 +37,6 @@ const KanbanBoard = () => {
       const newTasks = [...tasks];
       newTasks[taskIndex] = task;
       setTaskStatus(newTasks);
-
-      //   let newTasks = update(tasks, {
-      //     [taskIndex]: { $set: task },
-      //   });
-      //   setTaskStatus(newTasks);
     },
     [tasks]
   );
@@ -81,11 +67,19 @@ const KanbanBoard = () => {
 
     setUsers(userData.data);
   };
+  const getLanes = async () => {
+    const lanes = await axiosInstance.get("/lane");
+    setLanes(lanes.data);
+  };
   useEffect(() => {
     getTasks();
     getUsers();
+    getLanes();
   }, []);
-
+  const deleteChannel = async (id) => {
+    const data = await axiosInstance.delete(`/lane/${id}`);
+    getLanes();
+  };
   return (
     <main>
       <div style={classes.header}>
@@ -146,6 +140,7 @@ const KanbanBoard = () => {
             setItem={setItem}
             currItem={currItem}
             isNewTask={true}
+            lanes={lanes}
           />
           <Button
             onClick={() => setOpen(true)}
@@ -158,15 +153,26 @@ const KanbanBoard = () => {
           >
             Add Task
           </Button>
+          <Button
+            onClick={() => setAddLaneOpen(true)}
+            variant="outlined"
+            style={{
+              backgroundColor: "#1976d2",
+              color: "#fff",
+              margin: "10px",
+            }}
+          >
+            Add Lane
+          </Button>
         </div>
       </div>
 
       <DndProvider backend={HTML5Backend}>
         <section style={classes.board}>
-          {channels.map((channel) => (
+          {lanes.map((channel) => (
             <KanbanColumn
-              key={channel}
-              status={channel}
+              key={channel?.id}
+              status={channel?.value}
               changeTaskStatus={changeTaskStatus}
             >
               <div style={classes.column}>
@@ -176,15 +182,26 @@ const KanbanBoard = () => {
                     variant="h2"
                     component="h2"
                   >
-                    {labelsMap[channel]}
+                    {channel?.title}
                   </Typography>
+                </div>
+                <div>
+                  {tasks.findIndex((task) => task.status === channel?.value) !==
+                  -1 ? undefined : (
+                    <Button
+                      id={channel.id}
+                      onClick={(e) => deleteChannel(e.target.id)}
+                    >
+                      Delete Lane
+                    </Button>
+                  )}
                 </div>
 
                 <div style={{ margin: "5px" }}>
                   {tasks
                     ?.filter(
                       (item) =>
-                        item.status === channel &&
+                        item.status === channel?.value &&
                         (currUser === null ||
                           currUser === Number(item.assignedTo.id))
                     )

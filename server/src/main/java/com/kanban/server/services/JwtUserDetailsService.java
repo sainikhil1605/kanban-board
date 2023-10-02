@@ -25,15 +25,11 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 
     }
-    public UserDTO save(UserDAO user){
+    public UserDAO save(UserDAO user){
         UserDAO userDAO=UserDAO.builder().email(user.getEmail()).name(user.getName()).avatarSrc(user.getAvatarSrc()).password(new BCryptPasswordEncoder().encode(user.getPassword())).build();
 //        UserDAO savedUser= userRepository.save(user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()))));
-        UserDAO savedUser= userRepository.save(userDAO);
-        return UserDTO.builder()
-                .email(savedUser.getEmail())
-                .name(savedUser.getName())
-                .avatarSrc(savedUser.getAvatarSrc())
-                .build();
+
+        return userRepository.save(userDAO);
     }
     public List<UserDTO> getUsers(){
         List<UserDTO> userDTOS= new ArrayList<>();

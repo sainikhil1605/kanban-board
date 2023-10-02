@@ -18,7 +18,7 @@ import { dropdownOptions } from "../../utils/channels";
 import CardModal from "../CardModal";
 import { deepOrange } from "@mui/material/colors";
 
-const KanbanItem = ({ id, item, setTaskStatus, tasks, users }) => {
+const KanbanItem = ({ id, item, setTaskStatus, tasks, users, lanes }) => {
   const [open, setOpen] = useState(false);
   const [currItem, setItem] = useState(item);
   const ref = useRef(null);
@@ -95,6 +95,7 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks, users }) => {
         handleDelete={handleDelete}
         handleSubmit={handleSubmit}
         users={users}
+        lanes={lanes}
       />
     </>
   );

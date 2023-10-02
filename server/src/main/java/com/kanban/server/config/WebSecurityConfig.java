@@ -42,9 +42,14 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST,"/register","/login").permitAll()
-                .requestMatchers(HttpMethod.POST,"/task/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/task/**","/getUsers").permitAll().requestMatchers(HttpMethod.PATCH,"/task/**").permitAll();
+                .requestMatchers(HttpMethod.POST,"/register","/login","/task/**","/lane/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET,"/task/**","/getUsers","/lane/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.PATCH,"/task/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.DELETE,"/task/**","/lane/**")
+                .permitAll();
         // Adding our jwt filter before the username password filter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

@@ -1,6 +1,7 @@
 package com.kanban.server.config;
 
 import com.kanban.server.models.JwtResponse;
+import com.kanban.server.models.user.UserDAO;
 import com.kanban.server.models.user.UserDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -45,10 +46,10 @@ public class JwtTokenUtil implements Serializable {
     }
 
 
-    public JwtResponse getToken(UserDTO userDTO){
+    public JwtResponse getToken(UserDAO userDAO){
 
         Map<String,Object> claims = new HashMap<>();
-        claims.put("email",userDTO.getEmail());
-        return new JwtResponse(generateToken(claims,userDTO.getEmail()));
+        claims.put("email",userDAO.getEmail());
+        return new JwtResponse(generateToken(claims,userDAO.getEmail()));
     }
 }

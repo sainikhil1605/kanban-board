@@ -14,7 +14,6 @@ import {
   Input,
   TextField,
 } from "@mui/material";
-import { dropdownOptions } from "../../utils/channels";
 
 const CardModal = ({
   open,
@@ -25,8 +24,9 @@ const CardModal = ({
   handleDelete,
   handleSubmit,
   isNewTask,
+  lanes,
 }) => {
-  const value = dropdownOptions?.find((it) => it.value === currItem.status);
+  const value = lanes?.find((it) => it.value === currItem.status);
   console.log(currItem);
   return (
     <Dialog open={open} fullWidth maxWidth="xs">
@@ -58,9 +58,9 @@ const CardModal = ({
           <Autocomplete
             disablePortal
             id="combo-box-demo"
-            options={dropdownOptions}
+            options={lanes}
             sx={{ width: 300 }}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option.title}
             value={value}
             onChange={(e, newValue) =>
               setItem({ ...currItem, status: newValue.value })

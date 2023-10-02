@@ -28,7 +28,7 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody UserDAO userDAO){
 //        System.out.println(userDTO);
         try {
-            UserDTO user = jwtUserDetailsService.save(userDAO);
+            UserDAO user = jwtUserDetailsService.save(userDAO);
 
             return ResponseEntity.ok(jwtTokenUtil.getToken(user));
         }catch (Exception e){
@@ -39,10 +39,12 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO){
         try {
+            System.out.println(userDTO);
             Authentication authentication;
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            UserDTO principal= (UserDTO) authentication.getPrincipal();
+            UserDAO principal= (UserDAO) authentication.getPrincipal();
+
             return ResponseEntity.ok(jwtTokenUtil.getToken(principal));
         }catch (Exception e){
             System.out.println(e);
