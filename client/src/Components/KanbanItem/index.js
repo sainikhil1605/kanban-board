@@ -1,24 +1,13 @@
 import { useCallback, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import itemStyles from "./KanbanItem.styles";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import {
-  Autocomplete,
-  Avatar,
-  Button,
-  Card,
-  Input,
-  TextField,
-} from "@mui/material";
-import { dropdownOptions } from "../../utils/channels";
+import { Avatar, Card } from "@mui/material";
 import CardModal from "../CardModal";
 import { deepOrange } from "@mui/material/colors";
+import { useDispatch } from "react-redux";
+import { addTask, initialiseTasks } from "../../utils/reducers/taskReducer";
 
-const KanbanItem = ({ id, item, setTaskStatus, tasks, users, lanes }) => {
+const KanbanItem = ({ id, item, tasks, users, lanes }) => {
   const [open, setOpen] = useState(false);
   const [currItem, setItem] = useState(item);
   const ref = useRef(null);
@@ -34,21 +23,23 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks, users, lanes }) => {
   const handleOpen = () => {
     setOpen(true);
   };
-  const handleSubmit = useCallback(() => {
-    let task = tasks?.find((task) => task._id === item._id);
-    const taskIndex = tasks.indexOf(item);
-    task = { ...task, ...currItem };
-    const newTasks = [...tasks];
-    newTasks[taskIndex] = task;
-    console.log(newTasks);
-    setTaskStatus(newTasks);
-    setOpen(false);
-  }, [tasks, item, currItem, setTaskStatus]);
+  const dispatch = useDispatch();
+  const handleSubmit = () => {
+    return async function editTask(dispatch, getState) {
+      let task = tasks?.find((task) => task._id === item._id);
+      const taskIndex = tasks.indexOf(item);
+      task = { ...task, ...currItem };
+      const newTasks = [...tasks];
+      newTasks[taskIndex] = task;
+      dispatch(initialiseTasks(newTasks));
+      setOpen(false);
+    };
+  };
   const handleDelete = () => {
     const taskIndex = tasks.indexOf(item);
     const newTasks = [...tasks];
     newTasks.splice(taskIndex, 1);
-    setTaskStatus(newTasks);
+    dispatch(initialiseTasks(newTasks));
     setOpen(false);
   };
   return (
@@ -89,7 +80,6 @@ const KanbanItem = ({ id, item, setTaskStatus, tasks, users, lanes }) => {
         item={item}
         currItem={currItem}
         setItem={setItem}
-        setTaskStatus={setTaskStatus}
         tasks={tasks}
         setOpen={setOpen}
         handleDelete={handleDelete}

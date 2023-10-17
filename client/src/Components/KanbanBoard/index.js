@@ -9,6 +9,10 @@ import {
   Avatar,
   AvatarGroup,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   InputAdornment,
   TextField,
@@ -19,36 +23,37 @@ import axiosInstance from "../../utils/axiosInstance";
 import CardModal from "../CardModal";
 import { deepOrange } from "@mui/material/colors";
 import { channels } from "../../utils/channels";
+import ModalStyles from "../CardModal/CardModal.styles";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../utils/reducers/authReducer";
+import { addTask, initialiseTasks } from "../../utils/reducers/taskReducer";
+import store from "../../utils/store";
+import { initialiseUsers } from "../../utils/reducers/userReducer";
+import { initialiseLanes } from "../../utils/reducers/laneReducer";
 
 const KanbanBoard = () => {
-  const [tasks, setTaskStatus] = useState([]);
+  const tasks = useSelector((state) => state.tasks);
+  console.log(tasks);
   const [open, setOpen] = useState(false);
   const [addLaneOpen, setAddLaneOpen] = useState(false);
   const [currUser, setCurrUser] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [lanes, setLanes] = useState([]);
+  const users = useSelector((state) => state.users);
+  const lanes = useSelector((state) => state.lanes);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const changeTaskStatus = useCallback(
-    async (id, status) => {
-      let task = tasks?.find((task) => task.id === id);
-      const taskIndex = tasks.indexOf(task);
-      const data = await axiosInstance.patch(`/task/${id}`, { status });
-      task = { ...task, status };
-      const newTasks = [...tasks];
-      newTasks[taskIndex] = task;
-      setTaskStatus(newTasks);
-    },
-    [tasks]
-  );
   const [currItem, setItem] = useState({
     title: "",
     description: "",
     status: "",
   });
-  const handleSubmit = async () => {
-    const data = await axiosInstance.post("/task", currItem);
-    setTaskStatus((prev) => [...prev, data.data]);
-    setOpen(false);
+  const handleSubmit = () => {
+    return async function addNewTask(dispatch, getState) {
+      const data = await axiosInstance.post("/task", currItem);
+      dispatch(addTask(data.data));
+      setOpen(false);
+    };
   };
 
   const filterUser = (id) => {
@@ -58,31 +63,85 @@ const KanbanBoard = () => {
     }
     setCurrUser(Number(id));
   };
-  const getTasks = async () => {
-    const tasks = await axiosInstance.get("/task");
-    setTaskStatus(tasks.data);
+  const getTasks = () => {
+    return async function getData(dispatch, getState) {
+      const tasks = await axiosInstance.get("/task");
+      dispatch(initialiseTasks(tasks.data));
+    };
   };
-  const getUsers = async () => {
-    const userData = await axiosInstance.get("/getUsers");
 
-    setUsers(userData.data);
+  const getUsers = () => {
+    return async function getData(dispatch, getState) {
+      const users = await axiosInstance.get("/getUsers");
+      dispatch(initialiseUsers(users.data));
+    };
   };
-  const getLanes = async () => {
-    const lanes = await axiosInstance.get("/lane");
-    setLanes(lanes.data);
+  const getLanes = () => {
+    return async function getData(dispatch, getState) {
+      const lanes = await axiosInstance.get("/lane");
+      dispatch(initialiseLanes(lanes.data));
+    };
   };
   useEffect(() => {
-    getTasks();
-    getUsers();
-    getLanes();
+    if (!localStorage.getItem("access_token")) {
+      navigate("/login");
+    }
+    store.dispatch(getTasks());
+    store.dispatch(getUsers());
+    store.dispatch(getLanes());
   }, []);
   const deleteChannel = async (id) => {
     const data = await axiosInstance.delete(`/lane/${id}`);
     getLanes();
   };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+  const handleTaskAdd = () => {
+    return async function addNewTask(dispatch, getState) {
+      const data = await axiosInstance.post("/lane", currItem);
+      dispatch(initialiseTasks(data.data));
+      setAddLaneOpen(false);
+    };
+  };
   return (
     <main>
       <div style={classes.header}>
+        {addLaneOpen && (
+          <Dialog open={addLaneOpen} fullWidth maxWidth="xs">
+            <DialogTitle>
+              <div>Add New Lane</div>
+            </DialogTitle>
+            <DialogContent dividers>
+              <div style={ModalStyles.dialogField}>
+                <TextField
+                  fullWidth
+                  label="Lane Title"
+                  value={currItem.title}
+                  onChange={(e) =>
+                    setItem({ ...currItem, title: e.target.value })
+                  }
+                  variant="outlined"
+                />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => {
+                  setItem({ title: "" });
+                  setAddLaneOpen(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={() => store.dispatch(handleTaskAdd())}>
+                Add
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
         <div className="heading" style={{ flex: "1" }}>
           <div
             style={{
@@ -134,7 +193,7 @@ const KanbanBoard = () => {
         <div>
           <CardModal
             open={open}
-            setTaskStatus={setTaskStatus}
+            // setTaskStatus={setTaskStatus}
             users={users}
             handleSubmit={handleSubmit}
             setItem={setItem}
@@ -164,6 +223,13 @@ const KanbanBoard = () => {
           >
             Add Lane
           </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => handleLogout()}
+          >
+            Logout
+          </Button>
         </div>
       </div>
 
@@ -173,7 +239,7 @@ const KanbanBoard = () => {
             <KanbanColumn
               key={channel?.id}
               status={channel?.value}
-              changeTaskStatus={changeTaskStatus}
+              // changeTaskStatus={changeTaskStatus}
             >
               <div style={classes.column}>
                 <div style={{ display: "flex" }}>
@@ -210,7 +276,6 @@ const KanbanBoard = () => {
                         key={item.id}
                         id={item.id}
                         item={item}
-                        setTaskStatus={setTaskStatus}
                         tasks={tasks}
                         users={users}
                       />

@@ -5,18 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4df598a9-ec34-4fa4-89b3-f5385a47c47a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/controllers/LaneController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/models/lane/LaneDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/models/lane/LaneDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/repository/LaneRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/services/LaneService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Components/CardModal/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Components/CardModal/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Components/KanbanBoard/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Components/KanbanBoard/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/Components/Register/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Components/Register/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/kanban/server/config/JwtTokenUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/config/JwtTokenUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/kanban/server/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/config/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/kanban/server/controllers/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/controllers/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/kanban/server/models/user/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/models/user/UserDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/kanban/server/services/JwtUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/services/JwtUserDetailsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/kanban/server/services/TaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kanban/server/services/TaskService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,10 +37,12 @@
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="mavenHome" value="Use Maven wrapper" />
-        <option name="useMavenConfig" value="true" />
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2W5HV3mRouyJGBkNyePPxmUotkk" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -68,6 +67,9 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;spring.configuration.checksum&quot;: &quot;cf1e8c14e54505f60aa10ceb8d5d8ab3&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -113,7 +115,13 @@
       <workItem from="1696015607478" duration="23475000" />
       <workItem from="1696081483948" duration="530000" />
       <workItem from="1696197713206" duration="260000" />
-      <workItem from="1696202264346" duration="3508000" />
+      <workItem from="1696202264346" duration="4196000" />
+      <workItem from="1696553886770" duration="755000" />
+      <workItem from="1696650545150" duration="55000" />
+      <workItem from="1696987767022" duration="1103000" />
+      <workItem from="1696989223649" duration="2358000" />
+      <workItem from="1697507554106" duration="1007000" />
+      <workItem from="1697552899078" duration="3854000" />
     </task>
     <servers />
   </component>

@@ -14,6 +14,7 @@ import {
   Input,
   TextField,
 } from "@mui/material";
+import store from "../../utils/store";
 
 const CardModal = ({
   open,
@@ -27,7 +28,7 @@ const CardModal = ({
   lanes,
 }) => {
   const value = lanes?.find((it) => it.value === currItem.status);
-  console.log(currItem);
+  // console.log(currItem);
   return (
     <Dialog open={open} fullWidth maxWidth="xs">
       <DialogTitle>
@@ -96,7 +97,8 @@ const CardModal = ({
               Delete Task
             </Button>
           )}
-          <Button onClick={() => handleSubmit()}>
+
+          <Button onClick={() => store.dispatch(handleSubmit())}>
             {!isNewTask ? "Save Changes" : "Submit"}
           </Button>
         </div>

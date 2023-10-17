@@ -3,6 +3,9 @@ import { RegisterContainer } from "./Register.styles";
 import { useState } from "react";
 import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../utils/reducers/authReducer";
 
 const Register = () => {
   const [userDetails, setUserDetails] = useState({
@@ -11,15 +14,21 @@ const Register = () => {
     firstName: "",
     lastName: "",
   });
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
   };
+  const dispatch = useDispatch();
   const handleSubmit = async () => {
     const data = await axiosInstance.post("/register", userDetails);
+    if (data && data.status === 200) {
+      dispatch(login(data.data.token));
+      navigate("/");
+    }
   };
   return (
     <RegisterContainer>
-      <Typography variant="h3">Register</Typography>
+      <Typography variant="h4">Register</Typography>
       <TextField
         label="Email"
         variant="outlined"
@@ -50,7 +59,10 @@ const Register = () => {
         className="register-field"
       />
 
-      <Button onClick={handleSubmit}> Sign Up</Button>
+      <Button onClick={handleSubmit} variant="contained">
+        {" "}
+        Sign Up
+      </Button>
     </RegisterContainer>
   );
 };
