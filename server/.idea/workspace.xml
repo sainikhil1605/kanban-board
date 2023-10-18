@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4df598a9-ec34-4fa4-89b3-f5385a47c47a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +53,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "ts-code",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/Saini/Desktop/Fall 23/ASE/kanban-board/server",
     "node.js.detected.package.eslint": "true",
@@ -115,6 +116,7 @@
       <workItem from="1697507554106" duration="1007000" />
       <workItem from="1697552899078" duration="3854000" />
       <workItem from="1697661369042" duration="807000" />
+      <workItem from="1697670948266" duration="293000" />
     </task>
     <servers />
   </component>
