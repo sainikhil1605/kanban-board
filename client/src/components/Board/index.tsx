@@ -1,4 +1,4 @@
-import { useState, useEffect, Dispatch } from "react";
+import { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import classes from "./kanbanBoard.styles";
