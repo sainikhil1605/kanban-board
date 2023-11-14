@@ -45,7 +45,7 @@ const KanbanBoard = () => {
   const [currItem, setItem] = useState({
     title: "",
     description: "",
-    status: "",
+    value: "",
   });
   const handleSubmit = () => {
     return async function addNewTask(dispatch: AppDispatch) {
@@ -100,6 +100,8 @@ const KanbanBoard = () => {
   };
   const handleTaskAdd = () => {
     return async function addNewTask(dispatch: AppDispatch) {
+      currItem.value = currItem.title.toLowerCase().replace(/\s/g, "");
+      console.log(currItem);
       const data = await axiosInstance.post("/lane", currItem);
       dispatch(initialiseTasks(data.data));
       setAddLaneOpen(false);
@@ -132,7 +134,7 @@ const KanbanBoard = () => {
                   setItem({
                     title: "",
                     description: "",
-                    status: "",
+                    value: "",
                   });
                   setAddLaneOpen(false);
                 }}
