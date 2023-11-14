@@ -10,8 +10,7 @@ const Register = () => {
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
-    firstName: "",
-    lastName: "",
+    name: "",
   });
   const navigate = useNavigate();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,16 +43,9 @@ const Register = () => {
         className="register-field"
       />
       <TextField
-        label="First Name"
+        label="Name"
         variant="outlined"
-        name="firstName"
-        onChange={handleChange}
-        className="register-field"
-      />
-      <TextField
-        label="Last Name"
-        variant="outlined"
-        name="lastName"
+        name="name"
         onChange={handleChange}
         className="register-field"
       />
