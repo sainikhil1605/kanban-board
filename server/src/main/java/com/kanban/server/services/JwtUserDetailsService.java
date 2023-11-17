@@ -22,8 +22,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     public UserDAO loadUserByUsername(String username){
         return userRepository.findByEmail(username);
-
-
+    }
+    public UserDAO loadUserById(Long id){
+        return userRepository.findById(id).get();
     }
     public UserDAO save(UserDAO user){
         UserDAO userDAO=UserDAO.builder().email(user.getEmail()).name(user.getName()).avatarSrc(user.getAvatarSrc()).password(new BCryptPasswordEncoder().encode(user.getPassword())).build();

@@ -1,9 +1,9 @@
-import { useState, FormEvent, ChangeEvent } from "react";
 import styled from "@emotion/styled";
-import { TextField, Button, Typography } from "@mui/material";
-import axiosInstance from "../../utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import { Button, TextField, Typography } from "@mui/material";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
 import { login } from "../../utils/reducers/authReducer";
 
 const Root = styled.div`
@@ -48,7 +48,7 @@ const Login = () => {
     const handleFormSubmit = async () => {
       const data = await axiosInstance.post("/login", { email, password });
       if (data && data.status === 200) {
-        dispatch(login(data.data.token));
+        dispatch(login(data.data));
         navigate("/");
       }
     };

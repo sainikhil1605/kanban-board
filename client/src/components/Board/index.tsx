@@ -1,9 +1,3 @@
-import { useState, useEffect } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import classes from "./kanbanBoard.styles";
-import Card from "../Card";
-import Lane from "../Lane";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Avatar,
@@ -18,22 +12,29 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import itemStyles from "../Card/kanbanCard.styles";
-import axiosInstance from "../../utils/axiosInstance";
-import Modal from "../Modal";
 import { deepOrange } from "@mui/material/colors";
-import ModalStyles from "../Modal/modal.styles";
+import { useEffect, useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../utils/reducers/authReducer";
-import { addTask, initialiseTasks } from "../../utils/reducers/taskReducer";
-import store, { AppDispatch } from "../../utils/store";
-import { initialiseUsers } from "../../utils/reducers/userReducer";
-import { initialiseLanes } from "../../utils/reducers/laneReducer";
 import ProjectState from "../../types/projectTypes";
+import axiosInstance from "../../utils/axiosInstance";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import { initialiseAuthUser, logout } from "../../utils/reducers/authReducer";
+import { initialiseLanes } from "../../utils/reducers/laneReducer";
+import { addTask, initialiseTasks } from "../../utils/reducers/taskReducer";
+import { initialiseUsers } from "../../utils/reducers/userReducer";
+import store, { AppDispatch } from "../../utils/store";
+import Card from "../Card";
+import itemStyles from "../Card/kanbanCard.styles";
+import Lane from "../Lane";
+import Modal from "../Modal";
+import ModalStyles from "../Modal/modal.styles";
+import classes from "./kanbanBoard.styles";
 
 const KanbanBoard = () => {
   const tasks = useAppSelector((state: ProjectState) => state.tasks);
+  const auth = useAppSelector((state: ProjectState) => state.auth);
   const [open, setOpen] = useState(false);
   const [addLaneOpen, setAddLaneOpen] = useState(false);
   const [currUser, setCurrUser] = useState<number | null>(null);
@@ -81,13 +82,22 @@ const KanbanBoard = () => {
       dispatch(initialiseLanes(lanes.data));
     };
   };
+  const getUserDetails = () => {
+    return async function getData(dispatch: AppDispatch) {
+      const user = await axiosInstance.get(`/getUser/${auth?.id}`);
+      dispatch(initialiseAuthUser(user.data));
+    };
+  };
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
       navigate("/login");
     }
-    store.dispatch(getTasks());
-    store.dispatch(getUsers());
-    store.dispatch(getLanes());
+    if (auth?.token) {
+      store.dispatch(getUserDetails());
+      store.dispatch(getTasks());
+      store.dispatch(getUsers());
+      store.dispatch(getLanes());
+    }
   }, []);
   const deleteChannel = async (id: number) => {
     await axiosInstance.delete(`/lane/${id}`);
@@ -101,8 +111,12 @@ const KanbanBoard = () => {
   const handleTaskAdd = () => {
     return async function addNewTask(dispatch: AppDispatch) {
       currItem.value = currItem.title.toLowerCase().replace(/\s/g, "");
-      console.log(currItem);
       const data = await axiosInstance.post("/lane", currItem);
+      setItem({
+        title: "",
+        description: "",
+        value: "",
+      });
       dispatch(initialiseTasks(data.data));
       setAddLaneOpen(false);
     };
@@ -223,6 +237,20 @@ const KanbanBoard = () => {
             }}
           >
             Add Lane
+          </Button>
+          <Button>
+            {/* <Avatar
+              key={user.id}
+              alt={user.name}
+              style={user.id === currUser ? { border: "2px solid blue" } : {}}
+              imgProps={{
+                style: { cursor: "pointer" },
+              }}
+              src={user.avatarSrc || "https://"}
+              sx={{ bgcolor: deepOrange[500] }}
+              onClick={() => filterUser(user.id)}
+              component="div"
+            /> */}
           </Button>
           <Button
             color="error"

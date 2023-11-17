@@ -5,8 +5,8 @@ const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "Content-Type": "application/json",
-    Authorization: store.getState().auth
-      ? "Bearer " + store.getState().auth
+    Authorization: store.getState().auth.token
+      ? "Bearer " + store.getState().auth.token
       : null,
   },
 });
