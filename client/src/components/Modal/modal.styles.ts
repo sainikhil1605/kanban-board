@@ -16,7 +16,13 @@ const ModalStyles = {
     margin: "10px",
   },
   dialogField: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     margin: "15px",
+    ".dropdown": {
+      width: "100% !important",
+    },
   },
 };
 export default ModalStyles;

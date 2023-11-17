@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./reducers/authReducer";
+import laneReducer from "./reducers/laneReducer";
 import taskReducer from "./reducers/taskReducer";
 import userReducer from "./reducers/userReducer";
-import laneReducer from "./reducers/laneReducer";
 
 const store = configureStore({
   reducer: {

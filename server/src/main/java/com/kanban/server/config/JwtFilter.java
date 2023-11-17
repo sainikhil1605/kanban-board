@@ -80,7 +80,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
         System.out.println(path);
-        return path.equals("/register") || path.equals("/login")||path.equals("/swagger-ui")||path.equals("/swagger-ui/index.html")||path.matches("/swagger-ui/.*")||path.matches(
+        return path.equals("/register") ||path.equals("/upload")|| path.equals("/login")||path.equals("/swagger-ui")||path.equals("/swagger-ui/index.html")||path.matches("/swagger-ui/.*")||path.matches(
                 "/swagger-ui/")||path.matches("/v3/api-docs/*")||path.matches("/v3/api-docs")||path.matches("/v3/api-docs/.*")||path.matches("/v3/api-docs/");
 
     }

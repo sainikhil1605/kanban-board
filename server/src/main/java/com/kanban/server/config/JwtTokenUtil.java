@@ -49,7 +49,7 @@ public class JwtTokenUtil implements Serializable {
     public JwtResponse getToken(UserDAO userDAO){
 
         Map<String,Object> claims = new HashMap<>();
-        claims.put("email",userDAO.getEmail());
+        claims.put("id",userDAO.getId());
         return new JwtResponse(generateToken(claims,userDAO.getEmail()));
     }
 }

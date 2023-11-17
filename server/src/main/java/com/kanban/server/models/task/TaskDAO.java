@@ -21,7 +21,7 @@ public class TaskDAO {
     private String title;
     private String description;
     private String status;
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.DETACH)
 //    @JoinColumn(name = "assigned_to_id", referencedColumnName = "id", table = "Users")
     @JsonIgnoreProperties({"password"})
     private UserDAO assignedTo;

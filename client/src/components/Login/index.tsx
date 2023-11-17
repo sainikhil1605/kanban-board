@@ -46,10 +46,17 @@ const Login = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const handleFormSubmit = async () => {
-      const data = await axiosInstance.post("/login", { email, password });
-      if (data && data.status === 200) {
-        dispatch(login(data.data));
-        navigate("/");
+      try {
+        const data = await axiosInstance.post("/login", { email, password });
+        if (data && data.status === 200) {
+          dispatch(login(data.data));
+          navigate("/");
+        }
+        if (data.status === 400) {
+          alert("Invalid Credentials");
+        }
+      } catch (err) {
+        alert("Invalid Credentials");
       }
     };
     handleFormSubmit();

@@ -6,6 +6,9 @@ import com.kanban.server.models.user.UserDAO;
 import com.kanban.server.models.user.UserDTO;
 import com.kanban.server.services.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,9 +56,9 @@ public class UserController {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDAO principal= (UserDAO) authentication.getPrincipal();
-            JwtResponse jwtResponse = jwtTokenUtil.getToken(principal);
-            UserDTO user=UserDTO.builder().avatarSrc(principal.getAvatarSrc()).email(principal.getEmail()).name(principal.getName()).id(principal.getId()).token(jwtResponse.getToken()).build();
-            return ResponseEntity.ok(user);
+//            JwtResponse jwtResponse = jwtTokenUtil.getToken(principal);
+//            UserDTO user=UserDTO.builder().avatarSrc(principal.getAvatarSrc()).email(principal.getEmail()).name(principal.getName()).id(principal.getId()).token(jwtResponse.getToken()).build();
+            return ResponseEntity.ok(jwtTokenUtil.getToken(principal));
         }catch (Exception e){
             System.out.println(e);
             return ResponseEntity.badRequest().body("Invalid Credentials");
@@ -88,11 +91,36 @@ public class UserController {
             // Write the file to the directory
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            return ResponseEntity.ok("File uploaded successfully: " + filePath);
+            return ResponseEntity.ok(filePath.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Could not upload the file");
         }
     }
+    private final Path rootLocation = Paths.get("uploads");
+
+    @GetMapping("/uploads/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+        try {
+            Path file = rootLocation.resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity
+                        .ok()
+                        .contentType(MediaType.IMAGE_JPEG) // You might need to adjust the content type
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    @PutMapping("/updateUser/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id,@RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(jwtUserDetailsService.updateUser(id,userDTO));
+    }
+
 }

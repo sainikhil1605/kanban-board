@@ -1,20 +1,28 @@
+import { Avatar, Card } from "@mui/material";
+import { deepOrange } from "@mui/material/colors";
 import { useRef, useState } from "react";
 import { useDrag } from "react-dnd";
-import itemStyles from "./kanbanCard.styles";
-import { Avatar, Card } from "@mui/material";
-import Modal from "../Modal";
-import { deepOrange } from "@mui/material/colors";
-import { initialiseTasks } from "../../utils/reducers/taskReducer";
-import { AppDispatch } from "../../utils/store";
 import Task from "../../types/taskTypes";
+import axiosInstance from "../../utils/axiosInstance";
 import { useAppSelector } from "../../utils/hooks";
+import { initialiseTasks } from "../../utils/reducers/taskReducer";
+import store, { AppDispatch } from "../../utils/store";
+import Modal from "../Modal";
+import itemStyles from "./kanbanCard.styles";
 
 interface KanbanCardProps {
   task: Task;
+  avatarSrc?: string;
 }
-const KanbanCard = ({ task }: KanbanCardProps) => {
+const KanbanCard = ({ task, avatarSrc }: KanbanCardProps) => {
   const [open, setOpen] = useState(false);
   const [currItem, setItem] = useState(task);
+  const [error, setError] = useState({
+    title: false,
+    description: false,
+    assignedTo: false,
+    status: false,
+  });
   const tasks = useAppSelector((state) => state.tasks);
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
@@ -29,27 +37,48 @@ const KanbanCard = ({ task }: KanbanCardProps) => {
   const handleOpen = () => {
     setOpen(true);
   };
-  const handleSubmit = () => {
+  const handleEdit = () => {
     return async function editTask(dispatch: AppDispatch) {
       // let currTask: any = tasks?.find((item) => item.id === task.id);
       const taskIndex = tasks?.indexOf(task);
+
       task = { ...task, ...currItem };
+      const data = await axiosInstance.put(`/task/${task.id}`, task);
       const newTasks = [...tasks];
       newTasks[taskIndex] = task;
       dispatch(initialiseTasks(newTasks));
       setOpen(false);
     };
   };
+  const handleSubmit = () => {
+    if (
+      currItem.title === "" ||
+      currItem.description === "" ||
+      !currItem.assignedTo ||
+      !currItem.status
+    ) {
+      setError({
+        title: currItem.title === "" ? true : false,
+        description: currItem.description === "" ? true : false,
+        assignedTo: !currItem.assignedTo ? true : false,
+        status: !currItem.status ? true : false,
+      });
+      return;
+    }
+    store.dispatch(handleEdit());
+  };
   const handleDelete = () => {
     return async function deleteTask(dispatch: AppDispatch) {
       const taskIndex = tasks.indexOf(task);
-      console.log(taskIndex);
+
       const newTasks = [...tasks];
+      await axiosInstance.delete(`/task/${task.id}`);
       newTasks.splice(taskIndex, 1);
       dispatch(initialiseTasks(newTasks));
       setOpen(false);
     };
   };
+
   return (
     <>
       <Card
@@ -72,7 +101,7 @@ const KanbanCard = ({ task }: KanbanCardProps) => {
             <div style={itemStyles.itemId}>{task?.taskId}</div>
             <div>
               <Avatar
-                src={task?.assignedTo?.avatarSrc || "https://"}
+                src={avatarSrc || "https://"}
                 alt={task?.assignedTo?.name}
                 sx={{ bgcolor: deepOrange[400] }}
                 title={task?.assignedTo?.name}
@@ -84,11 +113,13 @@ const KanbanCard = ({ task }: KanbanCardProps) => {
       </Card>
       <Modal
         open={open}
+        setOpen={setOpen}
         item={task}
         currItem={currItem}
         setItem={setItem}
         handleDelete={handleDelete}
         handleSubmit={handleSubmit}
+        error={error}
       />
     </>
   );

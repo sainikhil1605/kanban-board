@@ -33,5 +33,17 @@ public class TaskService {
         taskRepository.save(taskDAO);
         return TaskDTO.builder().id(taskDAO.getId()).title(taskDAO.getTitle()).description(taskDAO.getDescription()).status(taskDAO.getStatus()).assignedTo( taskDAO.getAssignedTo()).build();
     }
+    public TaskDTO updateTask(Long id,TaskDTO task){
+        TaskDAO taskDAO=taskRepository.findById(id).get();
+        taskDAO.setTitle(task.getTitle());
+        taskDAO.setDescription(task.getDescription());
+        taskDAO.setStatus(task.getStatus());
+        taskDAO.setAssignedTo(task.getAssignedTo());
+        taskRepository.save(taskDAO);
+        return TaskDTO.builder().id(taskDAO.getId()).title(taskDAO.getTitle()).description(taskDAO.getDescription()).status(taskDAO.getStatus()).assignedTo( taskDAO.getAssignedTo()).build();
+    }
+    public void deleteTask(Long id){
+        taskRepository.deleteById(id);
+    }
 
 }

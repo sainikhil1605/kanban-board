@@ -23,8 +23,9 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDAO loadUserByUsername(String username){
         return userRepository.findByEmail(username);
     }
-    public UserDAO loadUserById(Long id){
-        return userRepository.findById(id).get();
+    public UserDTO loadUserById(Long id){
+        UserDAO userDAO= userRepository.findById(id).get();
+        return UserDTO.builder().id(userDAO.getId()).email(userDAO.getEmail()).name(userDAO.getName()).avatarSrc(userDAO.getAvatarSrc()).build();
     }
     public UserDAO save(UserDAO user){
         UserDAO userDAO=UserDAO.builder().email(user.getEmail()).name(user.getName()).avatarSrc(user.getAvatarSrc()).password(new BCryptPasswordEncoder().encode(user.getPassword())).build();
@@ -39,6 +40,13 @@ public class JwtUserDetailsService implements UserDetailsService {
                 ));
         return userDTOS;
     }
+   public UserDTO updateUser(Long id,UserDTO user){
+        UserDAO userDAO=userRepository.findById(id).get();
+        userDAO.setName(user.getName());
+        userDAO.setAvatarSrc(user.getAvatarSrc());
+        userRepository.save(userDAO);
+        return UserDTO.builder().id(userDAO.getId()).email(userDAO.getEmail()).name(userDAO.getName()).avatarSrc(userDAO.getAvatarSrc()).build();
+   }
 
 
 

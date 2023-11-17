@@ -32,9 +32,4 @@ public class UserDTO  {
     }
     private String name;
     private String avatarSrc;
-    private String token;
-    @JsonIgnore
-    public String getToken() {
-        return token;
-    }
 }
