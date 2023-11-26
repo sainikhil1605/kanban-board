@@ -25,4 +25,8 @@ public class LaneController {
     public void deleteLane(@PathVariable Long id){
         laneService.deleteLane(id);
     }
+    @PutMapping("/{id}")
+    public LaneDTO updateLane(@PathVariable Long id,@RequestBody LaneDTO laneDTO){
+        return laneService.updateLane(id,laneDTO);
+    }
 }

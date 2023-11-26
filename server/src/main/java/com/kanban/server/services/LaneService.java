@@ -25,4 +25,11 @@ public class LaneService {
     public void deleteLane(Long id){
         laneRepository.deleteById(id);
     }
+    public LaneDTO updateLane(Long id,LaneDTO laneDTO){
+        LaneDAO laneDAO=laneRepository.findById(id).get();
+        laneDAO.setTitle(laneDTO.getTitle());
+        laneDAO.setValue(laneDTO.getValue());
+        laneRepository.save(laneDAO);
+        return LaneDTO.builder().id(laneDAO.getId()).title(laneDAO.getTitle()).value(laneDAO.getValue()).build();
+    }
 }

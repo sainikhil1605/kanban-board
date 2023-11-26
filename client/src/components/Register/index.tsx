@@ -27,6 +27,11 @@ const Register = () => {
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>();
   const [imgBlob, setImgBlob] = useState<Blob>();
+  const [error, setError] = useState({
+    name: false,
+    password: false,
+    email: false,
+  });
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target?.files && event.target?.files[0]) {
       let img = event.target.files[0];
@@ -36,18 +41,36 @@ const Register = () => {
   };
   const handleSubmit = async () => {
     const form = new FormData();
+    if (
+      userDetails.name === "" ||
+      userDetails.email === "" ||
+      userDetails.password === ""
+    ) {
+      setError({
+        name: userDetails.name === "",
+        email: userDetails.email === "",
+        password: userDetails.password === "",
+      });
+      return;
+    }
+    setError({
+      name: false,
+      email: false,
+      password: false,
+    });
+    let imgData = null;
     if (imgBlob) {
       form.append("file", imgBlob);
+      imgData = await axiosInstance.post("/upload", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     }
-    const imgData = await axiosInstance.post("/upload", form, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
 
     const data = await axiosInstance.post("/register", {
       ...userDetails,
-      avatarSrc: imgData.data,
+      avatarSrc: imgData?.data || null,
     });
     if (data && data.status === 200) {
       dispatch(login(data.data));
@@ -94,6 +117,8 @@ const Register = () => {
         className="register-field"
         onChange={handleChange}
         name="email"
+        error={error?.email}
+        helperText={error?.email === true && "Email is required"}
       />
       <TextField
         label="Password"
@@ -102,6 +127,8 @@ const Register = () => {
         type="password"
         onChange={handleChange}
         className="register-field"
+        error={error?.password}
+        helperText={error?.password === true && "Password is required"}
       />
       <TextField
         label="Name"
@@ -109,9 +136,15 @@ const Register = () => {
         name="name"
         onChange={handleChange}
         className="register-field"
+        error={error?.name}
+        helperText={error?.name === true && "Name is required"}
       />
 
-      <Button onClick={handleSubmit} variant="contained">
+      <Button
+        onClick={handleSubmit}
+        variant="contained"
+        style={{ textTransform: "none" }}
+      >
         {" "}
         Sign Up
       </Button>

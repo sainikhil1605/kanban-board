@@ -43,6 +43,7 @@ public class JwtUserDetailsService implements UserDetailsService {
    public UserDTO updateUser(Long id,UserDTO user){
         UserDAO userDAO=userRepository.findById(id).get();
         userDAO.setName(user.getName());
+        userDAO.setEmail(user.getEmail());
         userDAO.setAvatarSrc(user.getAvatarSrc());
         userRepository.save(userDAO);
         return UserDTO.builder().id(userDAO.getId()).email(userDAO.getEmail()).name(userDAO.getName()).avatarSrc(userDAO.getAvatarSrc()).build();

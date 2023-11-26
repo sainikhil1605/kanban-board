@@ -5,6 +5,7 @@ const initialState = {
   email: "",
   name: "",
   avatarSrc: "",
+  blobURL: "",
   token: localStorage.getItem("access_token"),
 };
 
@@ -14,15 +15,17 @@ const authSlice = createSlice({
   reducers: {
     login(state, action) {
       const { id } = jwtDecode<{ id: number }>(action.payload.token);
+      console.log(id);
       localStorage.setItem("user_id", id.toString());
       localStorage.setItem("access_token", action.payload.token);
-      return { ...state, ...action.payload };
+      return { ...state, id, ...action.payload };
     },
     initialiseAuthUser(state, action) {
       return { ...state, ...action.payload };
     },
     logout() {
       localStorage.removeItem("access_token");
+      localStorage.removeItem("user_id");
       return initialState;
     },
   },

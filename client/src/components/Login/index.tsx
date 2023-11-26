@@ -27,7 +27,9 @@ const TextFieldStyled = styled(TextField)`
   margin-top: 10px;
 `;
 
-const ButtonStyled = styled(Button)``;
+const ButtonStyled = styled(Button)`
+  text-transform: none;
+`;
 
 const Login = () => {
   //   const history = useHistory();

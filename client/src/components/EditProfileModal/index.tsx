@@ -36,6 +36,7 @@ const EditProfileModal = ({
     name: auth?.name,
     email: auth?.email,
     avatarSrc: auth?.avatarSrc,
+    blobURL: auth?.blobURL,
   });
   const [imageBlob, setImgBlob] = useState<Blob>();
   const [error, setError] = useState({
@@ -47,23 +48,32 @@ const EditProfileModal = ({
       setError({ name: user.name === "", email: user.email === "" });
     }
     const form = new FormData();
+    let imgData = null;
     if (imageBlob) {
       form.append("file", imageBlob);
+      imgData = await axiosInstance.post("/upload", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     }
-    const imgData = await axiosInstance.post("/upload", form, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+
     const data = await axiosInstance.put(`/updateUser/${auth?.id}`, {
       ...user,
-      avatarSrc: imgData.data,
+      avatarSrc: imgData?.data || auth?.avatarSrc,
     });
     if (imageBlob) {
       store.dispatch(
         initialiseAuthUser({
           ...data.data,
-          avatarSrc: URL.createObjectURL(imageBlob),
+          blobURL: URL.createObjectURL(imageBlob),
+        })
+      );
+    } else {
+      store.dispatch(
+        initialiseAuthUser({
+          ...data.data,
+          avatarSrc: auth?.avatarSrc,
         })
       );
     }
@@ -73,7 +83,7 @@ const EditProfileModal = ({
     if (event.target?.files && event.target?.files[0]) {
       let img = event.target.files[0];
       setImgBlob(img);
-      setUser({ ...user, avatarSrc: URL.createObjectURL(img) });
+      setUser({ ...user, blobURL: URL.createObjectURL(img) });
     }
   };
   return (
@@ -105,8 +115,8 @@ const EditProfileModal = ({
             }
           >
             <Avatar
-              alt="User Avatar"
-              src={user?.avatarSrc || "https://"}
+              alt={user?.name}
+              src={user?.blobURL || "https://"}
               sx={{ width: 100, height: 100 }}
             />
           </Badge>
@@ -125,6 +135,7 @@ const EditProfileModal = ({
         <div style={ModalStyles.dialogField}>
           <TextField
             fullWidth
+            type="email"
             label="Email"
             value={user.email}
             onChange={(e) => setUser({ ...user, email: e.target.value })}

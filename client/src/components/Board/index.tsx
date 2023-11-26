@@ -1,4 +1,5 @@
-import { Button, Typography } from "@mui/material";
+import { Edit } from "@mui/icons-material";
+import { Button, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -12,6 +13,7 @@ import { initialiseLanes } from "../../utils/reducers/laneReducer";
 import { initialiseTasks } from "../../utils/reducers/taskReducer";
 import { initialiseUsers } from "../../utils/reducers/userReducer";
 import store, { AppDispatch } from "../../utils/store";
+import AddLaneModal from "../AddLaneModal";
 import Card from "../Card";
 import Header from "../Header";
 import Lane from "../Lane";
@@ -22,6 +24,12 @@ const KanbanBoard = () => {
 
   const [currUser, setCurrUser] = useState<number | null>(null);
   const lanes = useAppSelector((state: ProjectState) => state.lanes);
+  const [editLane, setEditLane] = useState(false);
+  const [currLane, setCurrLane] = useState({
+    title: "",
+    value: "",
+  });
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const getTasks = () => {
@@ -45,7 +53,7 @@ const KanbanBoard = () => {
         if (user?.avatarSrc !== null) {
           fetchedAvatar = await fetchImage(user?.avatarSrc);
         }
-        return { ...user, avatarSrc: fetchedAvatar };
+        return { ...user, blobURL: fetchedAvatar };
       });
       // console.log(Promise.all(parsedUsers));
       Promise.all(parsedUsers).then((data) => {
@@ -63,12 +71,13 @@ const KanbanBoard = () => {
   };
   const getUserDetails = () => {
     return async function getData(dispatch: AppDispatch) {
+      console.log(auth);
       const user = await axiosInstance.get(`/getUser/${auth?.id}`);
       if (user.data?.avatarSrc) {
         const data = await fetchImage(user.data?.avatarSrc);
-        user.data.avatarSrc = data;
+        user.data.blobURL = data;
       }
-      console.log(user.data);
+
       dispatch(initialiseAuthUser(user.data));
     };
   };
@@ -84,6 +93,10 @@ const KanbanBoard = () => {
     }
   }, [auth?.token, navigate]);
   const deleteChannel = async (id: number) => {
+    const laneIndex = lanes.findIndex((lane) => lane.id === id);
+    const temp = [...lanes];
+    temp.splice(laneIndex, 1);
+    store.dispatch(initialiseLanes(temp));
     await axiosInstance.delete(`/lane/${id}`);
     getLanes();
   };
@@ -91,9 +104,22 @@ const KanbanBoard = () => {
   return (
     <main>
       <div style={classes.header}>
-        <Header currUser={currUser} setCurrUser={setCurrUser} />
+        <Header
+          currUser={currUser}
+          setCurrUser={setCurrUser}
+          search={search}
+          setSearch={setSearch}
+        />
       </div>
-
+      {editLane && (
+        <AddLaneModal
+          addLaneOpen={editLane}
+          setAddLaneOpen={setEditLane}
+          isEditMode={true}
+          // @ts-ignore
+          currLane={currLane}
+        />
+      )}
       <DndProvider backend={HTML5Backend}>
         <section style={classes.board}>
           {lanes.map((channel) => (
@@ -108,6 +134,16 @@ const KanbanBoard = () => {
                   >
                     {channel?.title}
                   </Typography>
+                  <div>
+                    <IconButton
+                      onClick={() => {
+                        setCurrLane(channel);
+                        setEditLane(true);
+                      }}
+                    >
+                      <Edit />
+                    </IconButton>
+                  </div>
                 </div>
                 <div>
                   {tasks.findIndex((task) => task.status === channel?.value) !==
@@ -128,11 +164,12 @@ const KanbanBoard = () => {
                     )
                     .map((item) => (
                       <Card
-                        key={item.id}
+                        key={item?.id}
                         task={item}
                         avatarSrc={
-                          users.find((user) => user.id === item.assignedTo.id)
-                            ?.avatarSrc
+                          users.find(
+                            (user) => user?.id === item?.assignedTo?.id
+                          )?.blobURL
                         }
                       />
                     ))}

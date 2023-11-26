@@ -1,8 +1,16 @@
+import { useEffect } from "react";
 import "./App.css";
 import KanbanBoard from "./components/Board";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+import {
+  RouterProvider,
+  createBrowserRouter,
+  useNavigate,
+} from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +23,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <KanbanBoard />,
+    element: (
+      <ProtectedRoute>
+        <KanbanBoard />,
+      </ProtectedRoute>
+    ),
   },
 ]);
 

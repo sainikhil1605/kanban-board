@@ -3,6 +3,7 @@ interface User {
   email: string;
   name: string;
   avatarSrc: string;
+  blobURL?: string;
   token?: string | null;
 }
 

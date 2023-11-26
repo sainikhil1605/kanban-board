@@ -27,8 +27,10 @@ import Modal from "../Modal";
 interface HeaderProps {
   currUser: number | null;
   setCurrUser: React.Dispatch<React.SetStateAction<number | null>>;
+  search?: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-const Header = ({ currUser, setCurrUser }: HeaderProps) => {
+const Header = ({ currUser, setCurrUser, search, setSearch }: HeaderProps) => {
   const [addLaneOpen, setAddLaneOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -58,6 +60,12 @@ const Header = ({ currUser, setCurrUser }: HeaderProps) => {
       const data = await axiosInstance.post("/task", currItem);
       dispatch(addTask(data.data));
       setOpen(false);
+      setItem({
+        title: "",
+        description: "",
+        assignedTo: null,
+        status: "",
+      });
     };
   };
   const handleSubmit = () => {
@@ -130,6 +138,8 @@ const Header = ({ currUser, setCurrUser }: HeaderProps) => {
             placeholder="search"
             variant="outlined"
             style={itemStyles.searchField}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -156,7 +166,7 @@ const Header = ({ currUser, setCurrUser }: HeaderProps) => {
                   imgProps={{
                     style: { cursor: "pointer" },
                   }}
-                  src={user.avatarSrc || "https://"}
+                  src={user?.blobURL || "https://"}
                   sx={{ bgcolor: deepOrange[500] }}
                   onClick={() => filterUser(user.id)}
                   component="div"
@@ -180,7 +190,7 @@ const Header = ({ currUser, setCurrUser }: HeaderProps) => {
                           imgProps={{
                             style: { cursor: "pointer" },
                           }}
-                          src={user.avatarSrc || "https://"}
+                          src={user?.blobURL || "https://"}
                           sx={{ bgcolor: deepOrange[500] }}
                           onClick={() => filterUser(user.id)}
                           component="div"
@@ -239,7 +249,7 @@ const Header = ({ currUser, setCurrUser }: HeaderProps) => {
                 imgProps={{
                   style: { cursor: "pointer" },
                 }}
-                src={auth?.avatarSrc || "https://"}
+                src={auth?.blobURL || "https://"}
                 sx={{ bgcolor: deepOrange[500] }}
                 // onClick={() => filterUser(auth.id)}
                 component="div"
