@@ -1,3 +1,5 @@
+![GIF](recording1.gif)
+
 ### Prerequisites
 
 - Docker
