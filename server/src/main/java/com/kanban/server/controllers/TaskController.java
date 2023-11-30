@@ -3,10 +3,13 @@ package com.kanban.server.controllers;
 import com.kanban.server.models.task.TaskDAO;
 import com.kanban.server.models.task.TaskDTO;
 import com.kanban.server.models.user.UserDTO;
+import com.kanban.server.services.EmailService;
 import com.kanban.server.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,9 +20,14 @@ import java.util.List;
 public class TaskController {
     @Autowired
     TaskService taskService;
+    @Autowired
+    EmailService emailService;
     @PostMapping("")
     public TaskDTO addTask(@RequestBody TaskDTO task) {
-        System.out.println(task);
+        String to = task.getAssignedTo().getEmail();
+        String subject ="A New Task Has Been Assigned To You";
+        String body="A new task has been assigned to you. "+task.getTitle()+" Description: "+task.getDescription();
+        emailService.sendEmail(to, subject, body);
         return taskService.addTask(task);
     }
     @GetMapping("")
@@ -28,6 +36,7 @@ public class TaskController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id,@RequestBody TaskDTO task){
+
         return new ResponseEntity<TaskDTO>(taskService.updateTask(id,task),HttpStatus.OK);
     }
     @PatchMapping("/{id}")

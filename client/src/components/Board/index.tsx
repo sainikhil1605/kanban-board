@@ -159,6 +159,10 @@ const KanbanBoard = () => {
                     ?.filter(
                       (item) =>
                         item.status === channel?.value &&
+                        (search === "" ||
+                          item.title
+                            .toLowerCase()
+                            .includes(search.toLowerCase())) &&
                         (currUser === null ||
                           currUser === Number(item.assignedTo.id))
                     )

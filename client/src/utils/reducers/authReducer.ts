@@ -26,7 +26,14 @@ const authSlice = createSlice({
     logout() {
       localStorage.removeItem("access_token");
       localStorage.removeItem("user_id");
-      return initialState;
+      return {
+        id: 0,
+        email: "",
+        name: "",
+        avatarSrc: "",
+        blobURL: "",
+        token: "",
+      };
     },
   },
 });

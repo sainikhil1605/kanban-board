@@ -4,6 +4,7 @@ import com.kanban.server.config.JwtTokenUtil;
 import com.kanban.server.models.JwtResponse;
 import com.kanban.server.models.user.UserDAO;
 import com.kanban.server.models.user.UserDTO;
+import com.kanban.server.services.EmailService;
 import com.kanban.server.services.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -121,6 +122,17 @@ public class UserController {
     @PutMapping("/updateUser/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,@RequestBody UserDTO userDTO){
         return ResponseEntity.ok(jwtUserDetailsService.updateUser(id,userDTO));
+    }
+    @Autowired
+    private EmailService emailService;
+
+    @PostMapping("/assignItem")
+    public ResponseEntity<String> assignItem(@RequestBody String recipientEmail) {
+        // Your logic to assign the item
+
+        // Send an email
+
+        return ResponseEntity.ok("Item assigned successfully");
     }
 
 }

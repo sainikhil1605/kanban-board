@@ -17,6 +17,9 @@ const classes = {
     margin: "0 auto",
     width: "90vw",
     fontFamily: 'Arial, "Helvetica Neue", sans-serif',
+    overflow: "auto",
+    minHeight: "80vh",
+    maxHeight: "80vh",
   },
   column: {
     minWidth: 200,
@@ -28,6 +31,7 @@ const classes = {
     backgroundColor: "#e6e6e6",
     boxShadow:
       "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)",
+    overflow: "auto",
   },
   columnHead: {
     padding: 10,

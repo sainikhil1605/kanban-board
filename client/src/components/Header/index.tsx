@@ -223,6 +223,7 @@ const Header = ({ currUser, setCurrUser, search, setSearch }: HeaderProps) => {
           style={{
             backgroundColor: "#1976d2",
             color: "#fff",
+            textTransform: "none",
             margin: "10px",
           }}
         >
@@ -233,6 +234,7 @@ const Header = ({ currUser, setCurrUser, search, setSearch }: HeaderProps) => {
           variant="outlined"
           style={{
             backgroundColor: "#1976d2",
+            textTransform: "none",
             color: "#fff",
             margin: "10px",
           }}

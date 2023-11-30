@@ -12,13 +12,12 @@ import {
   TextField,
 } from "@mui/material";
 import { ChangeEvent, useState } from "react";
-import { useSelector } from "react-redux";
-import ProjectState from "../../types/projectTypes";
-import User from "../../types/userTypes";
 import axiosInstance from "../../utils/axiosInstance";
 import { initialiseAuthUser } from "../../utils/reducers/authReducer";
 import store from "../../utils/store";
 import ModalStyles from "../Modal/modal.styles";
+import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import { initialiseUsers } from "../../utils/reducers/userReducer";
 interface EditProfileModalProps {
   openProfile: boolean;
   setOpenProfile: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +30,7 @@ const EditProfileModal = ({
   const Input = styled("input")({
     display: "none",
   });
-  const auth: User | null = useSelector((state: ProjectState) => state.auth);
+  const { auth, users } = useAppSelector((state) => state);
   const [user, setUser] = useState({
     name: auth?.name,
     email: auth?.email,
@@ -39,6 +38,7 @@ const EditProfileModal = ({
     blobURL: auth?.blobURL,
   });
   const [imageBlob, setImgBlob] = useState<Blob>();
+  const dispatch = useAppDispatch();
   const [error, setError] = useState({
     name: false,
     email: false,
@@ -69,6 +69,14 @@ const EditProfileModal = ({
           blobURL: URL.createObjectURL(imageBlob),
         })
       );
+      const tempUsers = [...users];
+      const authIndex = tempUsers.findIndex((user) => user.id === auth?.id);
+
+      tempUsers[authIndex] = {
+        ...tempUsers[authIndex],
+        blobURL: URL.createObjectURL(imageBlob),
+      };
+      dispatch(initialiseUsers([...tempUsers]));
     } else {
       store.dispatch(
         initialiseAuthUser({

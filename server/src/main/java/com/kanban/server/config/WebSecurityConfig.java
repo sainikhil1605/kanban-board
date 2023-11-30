@@ -42,7 +42,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST,"/register","/login","/task/**","/lane/**","/upload")
+                .requestMatchers(HttpMethod.POST,"/register","/login","/task/**","/lane/**","/upload","/assignItem")
                 .permitAll()
                 .requestMatchers(HttpMethod.GET,"/task/**","/getUsers","/lane/**","/getUser/**","/**")
                 .permitAll()

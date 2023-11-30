@@ -27,6 +27,7 @@ public class LaneController {
     }
     @PutMapping("/{id}")
     public LaneDTO updateLane(@PathVariable Long id,@RequestBody LaneDTO laneDTO){
+
         return laneService.updateLane(id,laneDTO);
     }
 }
