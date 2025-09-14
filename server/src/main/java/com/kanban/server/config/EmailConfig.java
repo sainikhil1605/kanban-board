@@ -23,19 +23,21 @@ public class EmailConfig {
     @Value("${spring.mail.password}")
     private String password;
 
-
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(host);
         mailSender.setPort(port);
         mailSender.setUsername(username);
-        mailSender.setPassword("tkhi aeiu lsli oxrw");
-        System.out.println("EmailConfig.java: " + host + " " + port + " " + username + " " + password);
+        mailSender.setPassword(password); // ✅ now reads from application.properties
+
+        System.out.println("EmailConfig.java: " + host + " " + port + " " + username);
+
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
         props.put("mail.debug", "true");
 
         return mailSender;
